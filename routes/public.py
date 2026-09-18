@@ -1,11 +1,57 @@
-from flask import Blueprint, render_template, request, flash, current_app, redirect, url_for
+from flask import Blueprint, render_template, request, flash, current_app, redirect, url_for, jsonify
 from sqlalchemy import or_, func
 from models import db, Song, Artist, Download
 from utils import clean_html
 from r2 import presigned_download_url
 from app import limiter
+import re
 
 bp = Blueprint("public", __name__)
+
+EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+
+@bp.route("/api/contact", methods=["POST"])
+@limiter.limit("5 per hour")
+def api_contact():
+    """
+    JSON contact endpoint for the standalone contact.html page (or any
+    other same-origin static page) to POST to directly via fetch().
+    Deliberately outside ContactForm/CSRF since a plain static HTML file
+    has no session to carry a CSRF token in - rate limiting plus the
+    honeypot field below are this endpoint's abuse defenses instead.
+    Must be called from the same origin the app is served on; browsers'
+    same-origin policy blocks it from anywhere else by default since no
+    CORS headers are set here.
+    """
+    from utils import send_contact_message
+    data = request.get_json(silent=True) or request.form
+
+    # Honeypot: real users never fill this hidden field, bots often do.
+    if (data.get("_gotcha") or "").strip():
+        return jsonify({"success": True})  # pretend success, drop silently
+
+    name = (data.get("name") or "").strip()
+    email = (data.get("email") or "").strip()
+    subject = (data.get("subject") or "").strip()
+    message = (data.get("message") or "").strip()
+
+    errors = {}
+    if not name or len(name) > 200:
+        errors["name"] = "Please enter your name."
+    if not email or not EMAIL_RE.match(email) or len(email) > 200:
+        errors["email"] = "Please enter a valid email address."
+    if not subject or len(subject) > 300:
+        errors["subject"] = "Please enter a subject."
+    if not message or len(message) > 5000:
+        errors["message"] = "Please enter a message (max 5000 characters)."
+
+    if errors:
+        return jsonify({"success": False, "errors": errors}), 400
+
+    sent = send_contact_message(name, email, subject, message)
+    if sent:
+        return jsonify({"success": True})
+    return jsonify({"success": False, "errors": {"_general": "Failed to send. Please try emailing us directly."}}), 500
 
 @bp.route("/")
 def home():

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Us | Ateker Music</title>
+<meta name="description" content="Get in touch with the Ateker Music team - questions, artist support, or takedown requests.">
+<style>
+  :root {
+    --primary-500: #f97316;
+    --primary-600: #ea580c;
+    --gray-900: #111827;
+    --gray-700: #374151;
+    --gray-500: #6b7280;
+    --gray-200: #e5e7eb;
+    --gray-50: #f9fafb;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--gray-900);
+    background: var(--gray-50);
+    line-height: 1.5;
+  }
+
+  nav {
+    background: #fff;
+    border-bottom: 1px solid var(--gray-200);
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  nav .brand {
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--primary-600);
+    text-decoration: none;
+  }
+  nav .links {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  nav .links a {
+    color: var(--gray-700);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+  nav .links a:hover { color: var(--primary-600); }
+  nav .links a.active { color: var(--primary-600); font-weight: 700; }
+
+  header {
+    background: #f97316;
+    padding: 4rem 1.5rem 5rem;
+    text-align: center;
+    color: #fff;
+  }
+  header h1 { margin: 0 0 0.5rem; font-size: 2.25rem; font-weight: 700; }
+  header p { margin: 0; font-size: 1.05rem; opacity: 0.95; max-width: 32rem; margin: 0 auto; }
+
+  main { max-width: 48rem; margin: -3rem auto 4rem; padding: 0 1.5rem; }
+  .card { background: #fff; border-radius: 1rem; box-shadow: 0 10px 30px rgba(0,0,0,0.08); padding: 2rem; }
+
+  .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+  .info-item { padding: 1rem; background: var(--gray-50); border-radius: 0.75rem; border: 1px solid var(--gray-200); }
+  .info-item .label { font-size: 0.8rem; font-weight: 600; color: var(--primary-600); text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 0.25rem; }
+  .info-item a, .info-item span { color: var(--gray-700); text-decoration: none; font-size: 0.95rem; }
+  .info-item a:hover { color: var(--primary-600); text-decoration: underline; }
+
+  form { display: flex; flex-direction: column; gap: 1.1rem; }
+  .field { display: flex; flex-direction: column; gap: 0.4rem; }
+  label { font-size: 0.9rem; font-weight: 600; color: var(--gray-700); }
+  input, select, textarea {
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--gray-200);
+    border-radius: 0.6rem;
+    font-size: 0.95rem;
+    font-family: inherit;
+    background: #fff;
+    color: var(--gray-900);
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px rgba(249,115,22,0.15);
+  }
+  textarea { resize: vertical; min-height: 140px; }
+  button {
+    margin-top: 0.5rem;
+    background: var(--primary-500);
+    color: #fff;
+    border: none;
+    padding: 0.85rem 1.5rem;
+    border-radius: 0.6rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  button:hover { background: var(--primary-600); }
+  button:disabled { opacity: 0.6; cursor: not-allowed; }
+  .note { font-size: 0.85rem; color: var(--gray-500); margin-top: 1rem; text-align: center; }
+  .status-msg { display: none; margin-top: 1rem; padding: 0.8rem 1rem; border-radius: 0.6rem; font-size: 0.9rem; }
+  .status-msg.success { background: #dcfce7; color: #166534; }
+  .status-msg.error { background: #fee2e2; color: #991b1b; }
+
+  footer { text-align: center; padding: 2rem 1.5rem; color: var(--gray-500); font-size: 0.85rem; }
+  footer a { color: var(--gray-500); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="brand">Ateker Music</a>
+  <div class="links">
+    <a href="/">Home</a>
+    <a href="/songs">Songs</a>
+    <a href="/artists">Artists</a>
+    <a href="/about">About</a>
+    <a href="/contact" class="active">Contact</a>
+  </div>
+</nav>
+
+<header>
+  <h1>Get in Touch</h1>
+  <p>Questions, artist support, or a takedown request — we'd love to hear from you.</p>
+</header>
+
+<main>
+  <div class="card">
+    <div class="info-grid">
+      <div class="info-item">
+        <div class="label">Email</div>
+        <a href="mailto:atekermusic26@gmail.com">atekermusic26@gmail.com</a>
+      </div>
+      <div class="info-item">
+        <div class="label">Response Time</div>
+        <span>Within 1–2 business days</span>
+      </div>
+    </div>
+
+    <!--
+      This form sends via YOUR Flask app's own /api/contact endpoint -
+      no third-party service involved. For this to work:
+        1. This file must be hosted on the SAME domain as your Flask
+           app (e.g. your Railway URL, or your custom domain once
+           connected) - browsers block cross-origin requests by
+           default, and this endpoint doesn't add CORS headers to
+           allow other origins, on purpose (keeps it from being used
+           as an open relay by other sites).
+        2. Your Flask app must be running with mail configured
+           (MAIL_USERNAME/MAIL_PASSWORD/CONTACT_RECIPIENT_EMAIL in its
+           .env), same as the built-in /contact page.
+      If you're testing locally, this file needs to be reachable at
+      something like http://127.0.0.1:5000/contact.html for the
+      relative /api/contact fetch below to hit your local Flask app.
+    -->
+    <form id="contact-form" action="/api/contact" method="POST">
+      <div class="field">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" placeholder="Your full name" required>
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="you@example.com" required>
+      </div>
+
+      <div class="field">
+        <label for="subject">Subject</label>
+        <input type="text" id="subject" name="subject" placeholder="What's this about?" required>
+      </div>
+
+      <div class="field">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" placeholder="Tell us how we can help..." required></textarea>
+      </div>
+
+      <!-- Honeypot field - invisible to humans, catches basic spam bots -->
+      <input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off">
+
+      <button type="submit" id="submit-btn">Send Message</button>
+      <div id="status-msg" class="status-msg"></div>
+      <p class="note">Sent directly through your Ateker Music server.</p>
+    </form>
+  </div>
+</main>
+
+<footer>
+  &copy; <span id="year"></span> Ateker Music. All rights reserved.
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  const form = document.getElementById('contact-form');
+  const statusMsg = document.getElementById('status-msg');
+  const submitBtn = document.getElementById('submit-btn');
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+    statusMsg.style.display = 'none';
+
+    const payload = {
+      name: document.getElementById('name').value,
+      email: document.getElementById('email').value,
+      subject: document.getElementById('subject').value,
+      message: document.getElementById('message').value,
+      _gotcha: form.querySelector('[name="_gotcha"]').value
+    };
+
+    try {
+      const response = await fetch(form.action, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const result = await response.json();
+
+      if (result.success) {
+        statusMsg.textContent = "Thanks! Your message has been sent — we'll reply soon.";
+        statusMsg.className = 'status-msg success';
+        form.reset();
+      } else {
+        const firstError = result.errors ? Object.values(result.errors)[0] : null;
+        statusMsg.textContent = firstError || "Something went wrong. Please try again or email us directly.";
+        statusMsg.className = 'status-msg error';
+      }
+    } catch (err) {
+      statusMsg.textContent = "Couldn't reach the server. Make sure this page is hosted on the same domain as your Flask app (see the comment in the page source), and that the app is running.";
+      statusMsg.className = 'status-msg error';
+    }
+
+    statusMsg.style.display = 'block';
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Send Message';
+  });
+</script>
+
+</body>
+</html>
