@@ -1,0 +1,57 @@
+/* Ateker Music - Custom Styles */
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
+}
+
+/* Audio player styling */
+audio {
+    border-radius: 8px;
+    height: 40px;
+}
+
+/* Form focus improvements */
+input:focus, select:focus, textarea:focus {
+    box-shadow: 0 0 0 3px rgba(242, 101, 34, 0.1);
+}
+
+/* Table improvements */
+table th {
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.75rem;
+}
+
+/* Card hover lift */
+.hover\:shadow-sm:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Mobile menu (if needed later) */
+.mobile-menu {
+    display: none;
+}
+
+/* Print styles */
+@media print {
+    nav, footer, .no-print {
+        display: none !important;
+    }
+}

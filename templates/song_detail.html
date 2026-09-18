@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}{{ song.title }} by {{ song.artist.stage_name }}{% endblock %}
+{% block meta_description %}Download {{ song.title }} by {{ song.artist.stage_name }}. {{ song.description[:150] if song.description else 'Free MP3 download.' }}{% endblock %}
+{% block og_title %}{{ song.title }} - {{ song.artist.stage_name }}{% endblock %}
+{% block og_description %}{{ song.description[:200] if song.description else 'Download this track on Ateker Music.' }}{% endblock %}
+{% block head %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "MusicRecording",
+    "name": "{{ song.title }}",
+    "byArtist": { "@type": "MusicGroup", "name": "{{ song.artist.stage_name }}" },
+    "genre": "{{ song.genre }}",
+    {% if song.duration %}"duration": "PT{{ song.duration // 60 }}M{{ song.duration % 60 }}S",{% endif %}
+    "url": "{{ url_for('public.song_detail', slug=song.slug, _external=True) }}"
+}
+</script>
+{% endblock %}
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 py-10">
+    <div class="flex flex-col md:flex-row gap-8">
+        <!-- Cover -->
+        <div class="w-full md:w-72 flex-shrink-0">
+            <div class="aspect-square rounded-2xl overflow-hidden bg-gray-200 shadow-lg">
+                {% if song.cover_url %}
+                    <img src="{{ song.cover_url }}" alt="{{ song.title }}" class="w-full h-full object-cover" loading="lazy">
+                {% else %}
+                    <div class="w-full h-full flex items-center justify-center text-gray-400">
+                        <svg class="w-20 h-20" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z"/></svg>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Info -->
+        <div class="flex-1">
+            <h1 class="text-3xl font-bold mb-2">{{ song.title }}</h1>
+            <p class="text-lg text-gray-600 mb-4">
+                by <a href="{{ url_for('public.artist_profile', slug=song.artist.slug) }}" class="text-primary-500 font-medium hover:underline">{{ song.artist.stage_name }}</a>
+            </p>
+
+            <div class="flex flex-wrap gap-4 mb-6 text-sm text-gray-500">
+                <span class="px-3 py-1 bg-gray-100 rounded-full">{{ song.genre }}</span>
+                {% if song.album %}<span>Album: {{ song.album }}</span>{% endif %}
+                <span>{{ song.download_count }} downloads</span>
+                {% if song.duration %}<span>{{ song.duration // 60 }}:{{ "%02d" % (song.duration % 60) }}</span>{% endif %}
+            </div>
+
+            {% if song.description %}
+                <p class="text-gray-700 leading-relaxed mb-8">{{ song.description|safe }}</p>
+            {% endif %}
+
+            <a href="{{ url_for('public.download_song', slug=song.slug) }}" class="inline-flex items-center gap-2 px-8 py-3 bg-primary-500 text-white font-semibold rounded-lg hover:bg-primary-600 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download MP3
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

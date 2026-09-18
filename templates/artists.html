@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Artists | Ateker Music{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-10">
+    <h1 class="text-3xl font-bold mb-8">Artists</h1>
+
+    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
+        {% for artist in pagination.items %}
+            <a href="{{ url_for('public.artist_profile', slug=artist.slug) }}" class="group text-center">
+                <div class="aspect-square rounded-xl overflow-hidden bg-gray-200 mb-2 relative">
+                    {% if artist.avatar_url %}
+                        <img src="{{ artist.avatar_url }}" alt="{{ artist.stage_name }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" loading="lazy">
+                    {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-gray-400 text-2xl font-bold">{{ artist.stage_name[0] }}</div>
+                    {% endif %}
+                    {% if artist.is_verified %}
+                    <span class="absolute bottom-1 right-1 bg-blue-500 text-white rounded-full p-0.5" title="Verified">
+                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                    </span>
+                    {% endif %}
+                </div>
+                <p class="text-sm font-medium truncate">{{ artist.stage_name }}</p>
+                {% if artist.genre %}<p class="text-xs text-gray-400 truncate">{{ artist.genre }}</p>{% endif %}
+            </a>
+        {% else %}
+            <p class="col-span-full text-center text-gray-400 py-16">No artists yet.</p>
+        {% endfor %}
+    </div>
+
+    {% if pagination.pages > 1 %}
+    <div class="flex justify-center gap-2 mt-10">
+        {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+            {% if page_num %}
+                <a href="{{ url_for('public.artists', page=page_num) }}" class="px-3 py-1 rounded-lg text-sm {% if page_num == pagination.page %}bg-primary-500 text-white{% else %}bg-gray-100 text-gray-600 hover:bg-gray-200{% endif %}">{{ page_num }}</a>
+            {% else %}
+                <span class="px-3 py-1 text-gray-400">...</span>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

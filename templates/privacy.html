@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Privacy Policy | Ateker Music{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 py-16">
+    <h1 class="text-3xl font-bold mb-2">Privacy Policy</h1>
+    <p class="text-gray-400 text-sm mb-8">Last updated: September 2026</p>
+
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 prose prose-sm max-w-none text-gray-700 space-y-6">
+        <section>
+            <h2 class="font-semibold text-gray-900 mb-1">1. What We Collect</h2>
+            <p>When you create an account, we collect your name, email address, and password (stored securely, never in plain text). Artists additionally provide a stage name, bio, and optional social links. We also automatically collect basic usage data such as pages visited and songs played or downloaded, to keep the platform running and to improve it.</p>
+        </section>
+        <section>
+            <h2 class="font-semibold text-gray-900 mb-1">2. How We Use Your Information</h2>
+            <p>We use your information to operate your account, display artist profiles and songs publicly, send account-related emails (such as verification and password resets), moderate uploaded content, and understand overall platform usage.</p>
+        </section>
+        <section>
+            <h2 class="font-semibold text-gray-900 mb-1">3. What We Share Publicly</h2>
+            <p>Your stage name, bio, avatar, social links, and uploaded songs are visible to all visitors once approved. Your email address and account password are never shown publicly.</p>
+        </section>
+        <section>
+            <h2 class="font-semibold text-gray-900 mb-1">4. Third-Party Services</h2>
+            <p>We use Cloudflare R2 for audio and image storage, and an email provider to send account notifications. These providers process data on our behalf and are not permitted to use it for their own purposes.</p>
+        </section>
+        <section>
+            <h2 class="font-semibold text-gray-900 mb-1">5. Cookies</h2>
+            <p>We use essential cookies to keep you logged in and to remember basic preferences. We do not use cookies for third-party advertising.</p>
+        </section>
+        <section>
+            <h2 class="font-semibold text-gray-900 mb-1">6. Data Retention</h2>
+            <p>We retain your account data for as long as your account is active. If you delete your account, we remove your personal data within a reasonable period, except where we're required to retain it by law.</p>
+        </section>
+        <section>
+            <h2 class="font-semibold text-gray-900 mb-1">7. Your Rights</h2>
+            <p>You can review and update your account information at any time from your profile settings, and can request deletion of your account and data by contacting us. See our <a href="{{ url_for('public.data_privacy') }}" class="text-primary-500 hover:underline">Data Privacy</a> page for more detail on your rights.</p>
+        </section>
+        <section>
+            <h2 class="font-semibold text-gray-900 mb-1">8. Contact</h2>
+            <p>Questions about this policy can be sent through our <a href="{{ url_for('public.contact') }}" class="text-primary-500 hover:underline">Contact page</a>.</p>
+        </section>
+    </div>
+</div>
+{% endblock %}

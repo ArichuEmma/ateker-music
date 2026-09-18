@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard | Ateker Music{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-10">
+    <div class="flex flex-col md:flex-row gap-8">
+        <!-- Sidebar -->
+        <aside class="w-full md:w-64 flex-shrink-0">
+            <div class="bg-white rounded-xl border border-gray-100 p-4">
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Admin</p>
+                <nav class="space-y-1">
+                    <a href="{{ url_for('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium bg-primary-50 text-primary-600 rounded-lg">Dashboard</a>
+                    <a href="{{ url_for('admin.manage_users') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg">Users</a>
+                    <a href="{{ url_for('admin.manage_artists') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg">Artists</a>
+                    <a href="{{ url_for('admin.pending_songs') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg">Pending Songs</a>
+                    <a href="{{ url_for('admin.approved_songs') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg">Approved Songs</a>
+                    <a href="{{ url_for('admin.rejected_songs') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg">Rejected Songs</a>
+                    <a href="{{ url_for('admin.reports') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg">Reports</a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <div class="flex-1">
+            <h1 class="text-2xl font-bold mb-6">Admin Dashboard</h1>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="bg-white p-5 rounded-xl border border-gray-100">
+                    <p class="text-sm text-gray-500">Total Users</p>
+                    <p class="text-2xl font-bold mt-1">{{ stats.total_users }}</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-gray-100">
+                    <p class="text-sm text-gray-500">Artists</p>
+                    <p class="text-2xl font-bold mt-1">{{ stats.total_artists }}</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-gray-100">
+                    <p class="text-sm text-gray-500">Total Songs</p>
+                    <p class="text-2xl font-bold mt-1">{{ stats.total_songs }}</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-gray-100">
+                    <p class="text-sm text-gray-500">Downloads</p>
+                    <p class="text-2xl font-bold mt-1">{{ stats.total_downloads }}</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-gray-100">
+                    <p class="text-sm text-gray-500">Pending</p>
+                    <p class="text-2xl font-bold mt-1 text-yellow-600">{{ stats.pending_songs }}</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-gray-100">
+                    <p class="text-sm text-gray-500">Approved</p>
+                    <p class="text-2xl font-bold mt-1 text-green-600">{{ stats.approved_songs }}</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-gray-100">
+                    <p class="text-sm text-gray-500">Rejected</p>
+                    <p class="text-2xl font-bold mt-1 text-red-600">{{ stats.rejected_songs }}</p>
+                </div>
+            </div>
+
+            <!-- Pending Songs Quick View -->
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-xl border border-gray-100 p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-bold">Pending Review</h2>
+                        <a href="{{ url_for('admin.pending_songs') }}" class="text-sm text-primary-500 hover:underline">View all</a>
+                    </div>
+                    <div class="space-y-3">
+                        {% for song in pending_songs %}
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div>
+                                <p class="font-medium text-sm">{{ song.title }}</p>
+                                <p class="text-xs text-gray-500">{{ song.artist.stage_name }} &bull; {{ song.created_at.strftime('%b %d') }}</p>
+                            </div>
+                            <a href="{{ url_for('admin.review_song', song_id=song.id) }}" class="px-3 py-1 text-xs bg-primary-500 text-white rounded-lg hover:bg-primary-600">Review</a>
+                        </div>
+                        {% else %}
+                        <p class="text-gray-400 text-sm text-center py-4">No pending songs.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl border border-gray-100 p-6">
+                    <h2 class="text-lg font-bold mb-4">Recent Downloads</h2>
+                    <div class="space-y-3">
+                        {% for dl in recent_downloads %}
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div>
+                                <p class="font-medium text-sm">{{ dl.song.title }}</p>
+                                <p class="text-xs text-gray-500">{{ dl.created_at.strftime('%b %d, %H:%M') }}</p>
+                            </div>
+                        </div>
+                        {% else %}
+                        <p class="text-gray-400 text-sm text-center py-4">No recent downloads.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

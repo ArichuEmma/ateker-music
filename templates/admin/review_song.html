@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Review Song | Admin{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 py-10">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+        <h1 class="text-2xl font-bold mb-2">Review Song</h1>
+        <p class="text-gray-500 text-sm mb-6">{{ song.title }} by {{ song.artist.stage_name }}</p>
+
+        <div class="mb-6 p-4 bg-gray-50 rounded-xl">
+            <p class="text-sm text-gray-500 mb-1">Genre: {{ song.genre }}</p>
+            {% if song.album %}<p class="text-sm text-gray-500 mb-1">Album: {{ song.album }}</p>{% endif %}
+            {% if song.description %}<p class="text-sm text-gray-700 mt-2">{{ song.description|safe }}</p>{% endif %}
+            {% if song.cover_url %}
+            <div class="mt-3">
+                <img src="{{ url_for('admin.preview_pending_file', song_id=song.id, kind='cover') }}" alt="Cover" class="w-32 h-32 object-cover rounded-lg">
+            </div>
+            {% endif %}
+            <div class="mt-3">
+                <audio controls class="w-full">
+                    <source src="{{ url_for('admin.preview_pending_file', song_id=song.id, kind='audio') }}">
+                </audio>
+            </div>
+        </div>
+
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Decision</label>
+                {{ form.status(class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-primary-500 bg-white") }}
+            </div>
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Rejection Reason (if rejecting)</label>
+                {{ form.rejection_reason(class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-primary-500 h-24 resize-none") }}
+                {% if form.rejection_reason.errors %}<p class="text-red-500 text-xs mt-1">{{ form.rejection_reason.errors[0] }}</p>{% endif %}
+            </div>
+            {{ form.submit(class="px-6 py-3 bg-primary-500 text-white font-semibold rounded-lg hover:bg-primary-600 transition cursor-pointer") }}
+            <a href="{{ url_for('admin.pending_songs') }}" class="ml-3 px-6 py-3 border border-gray-200 text-gray-600 font-semibold rounded-lg hover:bg-gray-50">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

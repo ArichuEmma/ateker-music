@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Edit Profile | Ateker Music{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 py-10">
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+        <h1 class="text-2xl font-bold mb-2">Edit Artist Profile</h1>
+        <p class="text-gray-500 text-sm mb-6">This is what fans see on your public artist page.</p>
+
+        <form method="POST" action="" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Stage Name *</label>
+                {{ form.stage_name(class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-primary-500") }}
+                {% if form.stage_name.errors %}<p class="text-red-500 text-xs mt-1">{{ form.stage_name.errors[0] }}</p>{% endif %}
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Primary Genre</label>
+                    {{ form.genre(class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-primary-500 bg-white") }}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                    {{ form.location(class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-primary-500", placeholder="e.g. Moroto, Uganda") }}
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Biography</label>
+                {{ form.bio(class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-primary-500 h-28 resize-none", placeholder="Tell fans about yourself and your music...") }}
+                {% if form.bio.errors %}<p class="text-red-500 text-xs mt-1">{{ form.bio.errors[0] }}</p>{% endif %}
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Profile Picture</label>
+                    {% if artist.avatar_url %}
+                        <img src="{{ artist.avatar_url }}" alt="Current avatar" class="w-16 h-16 rounded-lg object-cover mb-2">
+                    {% endif %}
+                    {{ form.avatar(class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary-50 file:text-primary-600 hover:file:bg-primary-100") }}
+                    <p class="text-xs text-gray-400 mt-1">Max 5MB. Square image looks best.</p>
+                    {% if form.avatar.errors %}<p class="text-red-500 text-xs mt-1">{{ form.avatar.errors[0] }}</p>{% endif %}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Cover Banner</label>
+                    {% if artist.cover_url %}
+                        <img src="{{ artist.cover_url }}" alt="Current cover" class="w-full h-16 rounded-lg object-cover mb-2">
+                    {% endif %}
+                    {{ form.cover(class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-primary-50 file:text-primary-600 hover:file:bg-primary-100") }}
+                    <p class="text-xs text-gray-400 mt-1">Max 5MB. Wide image, shown at the top of your page.</p>
+                    {% if form.cover.errors %}<p class="text-red-500 text-xs mt-1">{{ form.cover.errors[0] }}</p>{% endif %}
+                </div>
+            </div>
+
+            <p class="text-sm font-semibold text-gray-700 mb-3">Social Links</p>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Facebook</label>
+                    {{ form.facebook(class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-primary-500 text-sm", placeholder="https://facebook.com/...") }}
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Twitter / X</label>
+                    {{ form.twitter(class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-primary-500 text-sm", placeholder="https://x.com/...") }}
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Instagram</label>
+                    {{ form.instagram(class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-primary-500 text-sm", placeholder="https://instagram.com/...") }}
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1">YouTube</label>
+                    {{ form.youtube(class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-primary-500 text-sm", placeholder="https://youtube.com/...") }}
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-xs font-medium text-gray-500 mb-1">Website</label>
+                    {{ form.website(class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-primary-500 text-sm", placeholder="https://...") }}
+                </div>
+            </div>
+
+            <div class="flex gap-3 mt-6">
+                {{ form.submit(class="flex-1 py-3 bg-primary-500 text-white font-semibold rounded-lg hover:bg-primary-600 transition cursor-pointer") }}
+                <a href="{{ url_for('public.artist_profile', slug=artist.slug) }}" target="_blank" class="px-6 py-3 border border-gray-200 text-gray-600 font-medium rounded-lg hover:bg-gray-50 text-center">
+                    View Public Page
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

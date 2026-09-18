@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}My Songs | Ateker Music{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-10">
+    <div class="flex flex-col md:flex-row gap-8">
+        <aside class="w-full md:w-64 flex-shrink-0">
+            <div class="bg-white rounded-xl border border-gray-100 p-4">
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Menu</p>
+                <nav class="space-y-1">
+                    <a href="{{ url_for('artist.dashboard') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg">Dashboard</a>
+                    <a href="{{ url_for('artist.profile') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg">My Profile</a>
+                    <a href="{{ url_for('artist.upload') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg">Upload Music</a>
+                    <a href="{{ url_for('artist.my_songs') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium bg-primary-50 text-primary-600 rounded-lg">My Songs</a>
+                    <a href="{{ url_for('artist.statistics') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg">Statistics</a>
+                </nav>
+            </div>
+        </aside>
+
+        <div class="flex-1">
+            <div class="flex items-center justify-between mb-6">
+                <h1 class="text-2xl font-bold">My Songs</h1>
+                <div class="flex gap-2">
+                    <a href="{{ url_for('artist.my_songs') }}" class="px-3 py-1 text-sm rounded-lg {% if not current_status %}bg-primary-500 text-white{% else %}bg-gray-100 text-gray-600{% endif %}">All</a>
+                    <a href="{{ url_for('artist.my_songs', status='PENDING') }}" class="px-3 py-1 text-sm rounded-lg {% if current_status == 'PENDING' %}bg-yellow-500 text-white{% else %}bg-gray-100 text-gray-600{% endif %}">Pending</a>
+                    <a href="{{ url_for('artist.my_songs', status='APPROVED') }}" class="px-3 py-1 text-sm rounded-lg {% if current_status == 'APPROVED' %}bg-green-500 text-white{% else %}bg-gray-100 text-gray-600{% endif %}">Approved</a>
+                    <a href="{{ url_for('artist.my_songs', status='REJECTED') }}" class="px-3 py-1 text-sm rounded-lg {% if current_status == 'REJECTED' %}bg-red-500 text-white{% else %}bg-gray-100 text-gray-600{% endif %}">Rejected</a>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl border border-gray-100 overflow-hidden">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-50 text-gray-500">
+                        <tr>
+                            <th class="px-4 py-3 text-left font-medium">Title</th>
+                            <th class="px-4 py-3 text-left font-medium">Genre</th>
+                            <th class="px-4 py-3 text-left font-medium">Status</th>
+                            <th class="px-4 py-3 text-left font-medium">Downloads</th>
+                            <th class="px-4 py-3 text-left font-medium">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        {% for song in songs %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-3 font-medium">{{ song.title }}</td>
+                            <td class="px-4 py-3 text-gray-500">{{ song.genre }}</td>
+                            <td class="px-4 py-3">
+                                <span class="px-2 py-1 rounded-full text-xs font-medium
+                                    {% if song.status == 'APPROVED' %}bg-green-100 text-green-700
+                                    {% elif song.status == 'PENDING' %}bg-yellow-100 text-yellow-700
+                                    {% else %}bg-red-100 text-red-700{% endif %}">
+                                    {{ song.status }}
+                                </span>
+                                {% if song.status == 'REJECTED' and song.rejection_reason %}
+                                    <p class="text-xs text-red-500 mt-1">{{ song.rejection_reason[:80] }}{% if song.rejection_reason|length > 80 %}...{% endif %}</p>
+                                {% endif %}
+                            </td>
+                            <td class="px-4 py-3">{{ song.download_count }}</td>
+                            <td class="px-4 py-3">
+                                <div class="flex gap-2">
+                                    {% if song.status != 'APPROVED' %}
+                                        <a href="{{ url_for('artist.edit_song', song_id=song.id) }}" class="text-xs px-2 py-1 bg-gray-100 rounded hover:bg-gray-200">Edit</a>
+                                    {% endif %}
+                                    <form method="POST" action="{{ url_for('artist.delete_song', song_id=song.id) }}" onsubmit="return confirm('Delete this song?');" class="inline">
+                                        <button type="submit" class="text-xs px-2 py-1 bg-red-50 text-red-600 rounded hover:bg-red-100">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="5" class="px-4 py-8 text-center text-gray-400">No songs found.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if pagination.pages > 1 %}
+            <div class="flex justify-center gap-2 mt-6">
+                {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                    {% if page_num %}
+                        <a href="{{ url_for('artist.my_songs', page=page_num, status=current_status) }}" class="px-3 py-1 rounded-lg text-sm {% if page_num == pagination.page %}bg-primary-500 text-white{% else %}bg-gray-100 text-gray-600 hover:bg-gray-200{% endif %}">{{ page_num }}</a>
+                    {% else %}
+                        <span class="px-3 py-1 text-gray-400">...</span>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

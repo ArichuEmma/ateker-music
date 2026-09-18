@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}{{ artist.stage_name }} | Ateker Music{% endblock %}
+{% block meta_description %}{{ artist.bio[:150]|striptags if artist.bio else artist.stage_name + ' on Ateker Music - stream and download ' + (artist.genre or 'their') + ' tracks.' }}{% endblock %}
+{% block og_title %}{{ artist.stage_name }} | Ateker Music{% endblock %}
+{% block og_description %}{{ artist.bio[:200]|striptags if artist.bio else 'Discover music from ' + artist.stage_name + ' on Ateker Music.' }}{% endblock %}
+{% block head %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "MusicGroup",
+    "name": "{{ artist.stage_name }}",
+    {% if artist.genre %}"genre": "{{ artist.genre }}",{% endif %}
+    "url": "{{ url_for('public.artist_profile', slug=artist.slug, _external=True) }}"
+}
+</script>
+{% endblock %}
+{% block content %}
+<div class="max-w-5xl mx-auto">
+    <div class="h-48 md:h-64 w-full rounded-b-2xl overflow-hidden bg-gradient-to-br from-orange-200 to-orange-400">
+        {% if artist.cover_url %}
+            <img src="{{ artist.cover_url }}" alt="{{ artist.stage_name }} cover" class="w-full h-full object-cover" loading="lazy">
+        {% endif %}
+    </div>
+
+    <div class="px-4">
+        <div class="flex flex-col md:flex-row gap-6 items-start -mt-12 md:-mt-16 mb-6">
+            <div class="w-28 h-28 md:w-32 md:h-32 rounded-2xl overflow-hidden bg-gray-200 flex-shrink-0 border-4 border-white shadow-sm">
+                {% if artist.avatar_url %}
+                    <img src="{{ artist.avatar_url }}" alt="{{ artist.stage_name }}" class="w-full h-full object-cover" loading="lazy">
+                {% else %}
+                    <div class="w-full h-full flex items-center justify-center text-4xl font-bold text-gray-400 bg-gray-100">{{ artist.stage_name[0] }}</div>
+                {% endif %}
+            </div>
+            <div class="pt-0 md:pt-16">
+                <div class="flex items-center gap-2 flex-wrap">
+                    <h1 class="text-3xl font-bold">{{ artist.stage_name }}</h1>
+                    {% if artist.is_verified %}
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full text-xs font-semibold" title="Verified artist">
+                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                        Verified
+                    </span>
+                    {% endif %}
+                </div>
+                {% if artist.location %}<p class="text-gray-500 mt-1">{{ artist.location }}</p>{% endif %}
+                {% if artist.genre %}<span class="inline-block mt-2 px-3 py-1 bg-primary-50 text-primary-600 rounded-full text-sm font-medium">{{ artist.genre }}</span>{% endif %}
+                {% if artist.bio %}<p class="mt-4 text-gray-700 leading-relaxed max-w-2xl">{{ artist.bio|safe }}</p>{% endif %}
+
+                <div class="flex gap-6 mt-4 text-sm">
+                    <div><span class="font-bold text-gray-900">{{ stats.song_count }}</span> <span class="text-gray-500">songs</span></div>
+                    <div><span class="font-bold text-gray-900">{{ stats.total_downloads }}</span> <span class="text-gray-500">downloads</span></div>
+                    <div><span class="font-bold text-gray-900">{{ artist.created_at.strftime('%b %Y') }}</span> <span class="text-gray-500">joined</span></div>
+                </div>
+
+                <div class="flex items-center gap-3 mt-4">
+                    {% if artist.facebook %}<a href="{{ artist.facebook }}" target="_blank" class="text-gray-400 hover:text-primary-500">FB</a>{% endif %}
+                    {% if artist.twitter %}<a href="{{ artist.twitter }}" target="_blank" class="text-gray-400 hover:text-primary-500">X</a>{% endif %}
+                    {% if artist.instagram %}<a href="{{ artist.instagram }}" target="_blank" class="text-gray-400 hover:text-primary-500">IG</a>{% endif %}
+                    {% if artist.youtube %}<a href="{{ artist.youtube }}" target="_blank" class="text-gray-400 hover:text-primary-500">YT</a>{% endif %}
+                    {% if artist.website %}<a href="{{ artist.website }}" target="_blank" class="text-gray-400 hover:text-primary-500">Website</a>{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <h2 class="text-2xl font-bold mb-6">Songs</h2>
+        <div class="space-y-3 pb-10">
+            {% for song in songs %}
+                <div class="flex items-center gap-4 bg-white p-3 rounded-xl border border-gray-100 hover:border-primary-200 transition">
+                    <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-300 to-orange-500 flex items-center justify-center text-white flex-shrink-0">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-medium truncate">{{ song.title }}</p>
+                        <p class="text-sm text-gray-500">{{ song.genre }} &bull; {{ song.download_count }} downloads</p>
+                    </div>
+                    <a href="{{ url_for('public.song_detail', slug=song.slug) }}" class="px-4 py-2 text-sm font-medium text-primary-500 border border-primary-500 rounded-lg hover:bg-primary-500 hover:text-white transition">Details</a>
+                </div>
+            {% else %}
+                <p class="text-gray-500 text-center py-10">No songs available yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

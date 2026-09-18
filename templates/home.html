@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}Ateker Music - Download Free MP3s{% endblock %}
+{% block content %}
+<!-- Hero -->
+<section class="bg-gradient-to-br from-primary-500 to-primary-700 text-white">
+    <div class="max-w-7xl mx-auto px-4 py-16 md:py-24 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4">Discover Ateker Music</h1>
+        <p class="text-lg md:text-xl opacity-95 max-w-xl mx-auto mb-8">Download the latest hits from Ateker's finest artists. Free, fast, and always fresh.</p>
+        <div class="flex gap-4 justify-center flex-wrap">
+            <a href="{{ url_for('public.all_songs') }}" class="px-8 py-3 bg-white text-primary-600 font-semibold rounded-lg hover:bg-gray-100 transition">Explore Music</a>
+            <a href="{{ url_for('public.artists') }}" class="px-8 py-3 border-2 border-white/50 text-white font-semibold rounded-lg hover:bg-white/10 transition">Discover Artists</a>
+        </div>
+    </div>
+</section>
+
+<!-- Stats -->
+<section class="bg-white border-y border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div><div class="text-3xl font-bold text-primary-500">{{ stats.songs|default(0) }}+</div><div class="text-sm text-gray-500 mt-1">Songs</div></div>
+            <div><div class="text-3xl font-bold text-primary-500">{{ stats.artists|default(0) }}+</div><div class="text-sm text-gray-500 mt-1">Artists</div></div>
+            <div><div class="text-3xl font-bold text-primary-500">{{ stats.downloads|default(0) }}+</div><div class="text-sm text-gray-500 mt-1">Downloads</div></div>
+            <div><div class="text-3xl font-bold text-primary-500">50K+</div><div class="text-sm text-gray-500 mt-1">Users</div></div>
+        </div>
+    </div>
+</section>
+
+<!-- Genres -->
+<section class="max-w-7xl mx-auto px-4 py-10">
+    <h2 class="text-2xl font-bold mb-6">Browse by Genre</h2>
+    <div class="flex flex-wrap gap-3">
+        <a href="{{ url_for('public.all_songs') }}" class="px-5 py-2 bg-primary-500 text-white rounded-full text-sm font-medium">All</a>
+        {% for g in genres %}
+            <a href="{{ url_for('public.all_songs', genre=g) }}" class="px-5 py-2 bg-white border border-gray-200 rounded-full text-sm font-medium hover:bg-primary-500 hover:text-white hover:border-primary-500 transition">{{ g }}</a>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Featured Artists -->
+<section class="max-w-7xl mx-auto px-4 py-10">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold">Featured Artists</h2>
+        <a href="{{ url_for('public.artists') }}" class="text-sm text-primary-500 font-medium hover:underline">See all</a>
+    </div>
+    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
+        {% for artist in featured_artists %}
+            <a href="{{ url_for('public.artist_profile', slug=artist.slug) }}" class="group text-center">
+                <div class="aspect-square rounded-xl overflow-hidden bg-gray-200 mb-2">
+                    {% if artist.avatar_url %}
+                        <img src="{{ artist.avatar_url }}" alt="{{ artist.stage_name }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" loading="lazy">
+                    {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-gray-400 text-2xl font-bold">{{ artist.stage_name[0] }}</div>
+                    {% endif %}
+                </div>
+                <p class="text-sm font-medium truncate">{{ artist.stage_name }}</p>
+            </a>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Latest Songs -->
+<section class="max-w-7xl mx-auto px-4 py-10">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold">Latest Songs</h2>
+        <a href="{{ url_for('public.all_songs') }}" class="text-sm text-primary-500 font-medium hover:underline">View all</a>
+    </div>
+    <div class="space-y-3">
+        {% for song in latest_songs %}
+            <div class="flex items-center gap-4 bg-white p-3 rounded-xl border border-gray-100 hover:border-primary-200 hover:shadow-sm transition">
+                <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-orange-300 to-orange-500 flex items-center justify-center text-white flex-shrink-0">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="font-medium truncate">{{ song.title }}</p>
+                    <p class="text-sm text-gray-500">{{ song.artist.stage_name }} &bull; {{ song.genre }}</p>
+                </div>
+                <a href="{{ url_for('public.song_detail', slug=song.slug) }}" class="px-4 py-2 text-sm font-medium text-primary-500 border border-primary-500 rounded-lg hover:bg-primary-500 hover:text-white transition">Details</a>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Popular Artists -->
+<section class="max-w-7xl mx-auto px-4 py-10">
+    <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold">Popular Artists</h2>
+    </div>
+    <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
+        {% for artist in popular_artists %}
+            <a href="{{ url_for('public.artist_profile', slug=artist.slug) }}" class="group text-center">
+                <div class="aspect-square rounded-xl overflow-hidden bg-gray-200 mb-2">
+                    {% if artist.avatar_url %}
+                        <img src="{{ artist.avatar_url }}" alt="{{ artist.stage_name }}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300" loading="lazy">
+                    {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-gray-400 text-2xl font-bold">{{ artist.stage_name[0] }}</div>
+                    {% endif %}
+                </div>
+                <p class="text-sm font-medium truncate">{{ artist.stage_name }}</p>
+            </a>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

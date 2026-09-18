@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Approved Songs | Admin{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-10">
+    <div class="flex flex-col md:flex-row gap-8">
+        <aside class="w-full md:w-64 flex-shrink-0">
+            <div class="bg-white rounded-xl border border-gray-100 p-4">
+                <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Admin</p>
+                <nav class="space-y-1">
+                    <a href="{{ url_for('admin.dashboard') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg">Dashboard</a>
+                    <a href="{{ url_for('admin.manage_users') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg">Users</a>
+                    <a href="{{ url_for('admin.manage_artists') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg">Artists</a>
+                    <a href="{{ url_for('admin.pending_songs') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg">Pending Songs</a>
+                    <a href="{{ url_for('admin.approved_songs') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium bg-primary-50 text-primary-600 rounded-lg">Approved Songs</a>
+                    <a href="{{ url_for('admin.rejected_songs') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg">Rejected Songs</a>
+                    <a href="{{ url_for('admin.reports') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 rounded-lg">Reports</a>
+                </nav>
+            </div>
+        </aside>
+
+        <div class="flex-1">
+            <h1 class="text-2xl font-bold mb-6">Approved Songs</h1>
+
+            <div class="bg-white rounded-xl border border-gray-100 overflow-hidden">
+                <table class="w-full text-sm">
+                    <thead class="bg-gray-50 text-gray-500">
+                        <tr>
+                            <th class="px-4 py-3 text-left font-medium">Song</th>
+                            <th class="px-4 py-3 text-left font-medium">Artist</th>
+                            <th class="px-4 py-3 text-left font-medium">Genre</th>
+                            <th class="px-4 py-3 text-left font-medium">Downloads</th>
+                            <th class="px-4 py-3 text-left font-medium">Approved</th>
+                            <th class="px-4 py-3 text-left font-medium">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        {% for song in pagination.items %}
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-4 py-3 font-medium">{{ song.title }}</td>
+                            <td class="px-4 py-3 text-gray-500">{{ song.artist.stage_name }}</td>
+                            <td class="px-4 py-3 text-gray-500">{{ song.genre }}</td>
+                            <td class="px-4 py-3 text-gray-500">{{ song.download_count }}</td>
+                            <td class="px-4 py-3 text-gray-500">{{ song.updated_at.strftime('%b %d, %Y') }}</td>
+                            <td class="px-4 py-3">
+                                <div class="flex gap-2">
+                                    <a href="{{ url_for('public.song_detail', slug=song.slug) }}" target="_blank" class="px-3 py-1 text-xs bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200">View</a>
+                                    <form method="POST" action="{{ url_for('admin.delete_song', song_id=song.id) }}" onsubmit="return confirm('Delete this song? This cannot be undone.');" class="inline">
+                                        <button type="submit" class="px-3 py-1 text-xs bg-red-50 text-red-600 rounded-lg hover:bg-red-100">Delete</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="6" class="px-4 py-8 text-center text-gray-400">No approved songs yet.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if pagination.pages > 1 %}
+            <div class="flex justify-center gap-2 mt-6">
+                {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                    {% if page_num %}
+                        <a href="{{ url_for('admin.approved_songs', page=page_num) }}" class="px-3 py-1 rounded-lg text-sm {% if page_num == pagination.page %}bg-primary-500 text-white{% else %}bg-gray-100 text-gray-600 hover:bg-gray-200{% endif %}">{{ page_num }}</a>
+                    {% else %}
+                        <span class="px-3 py-1 text-gray-400">...</span>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

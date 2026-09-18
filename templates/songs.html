@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Songs | Ateker Music{% endblock %}
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 py-10">
+    <h1 class="text-3xl font-bold mb-6">All Songs</h1>
+
+    <form method="GET" action="{{ url_for('public.all_songs') }}" class="flex flex-wrap gap-3 mb-8">
+        <input type="text" name="q" value="{{ search }}" placeholder="Search songs, artists, albums..."
+               class="flex-1 min-w-[200px] px-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500">
+        <select name="genre" class="px-4 py-2 border border-gray-200 rounded-lg text-sm bg-white">
+            <option value="" {% if not genre %}selected{% endif %}>All Genres</option>
+            {% for g in ["Afrobeat", "Gospel", "Hip Hop", "Dancehall", "R&B", "Traditional", "DJ Mix", "Other"] %}
+                <option value="{{ g }}" {% if genre == g %}selected{% endif %}>{{ g }}</option>
+            {% endfor %}
+        </select>
+        <select name="sort" class="px-4 py-2 border border-gray-200 rounded-lg text-sm bg-white">
+            <option value="latest" {% if sort == "latest" %}selected{% endif %}>Latest</option>
+            <option value="popular" {% if sort == "popular" %}selected{% endif %}>Most Downloaded</option>
+        </select>
+        <button type="submit" class="px-5 py-2 bg-primary-500 text-white rounded-lg text-sm font-medium hover:bg-primary-600">Filter</button>
+        {% if search or genre or sort != "latest" %}
+            <a href="{{ url_for('public.all_songs') }}" class="px-4 py-2 text-gray-500 text-sm hover:underline flex items-center">Clear</a>
+        {% endif %}
+    </form>
+
+    <div class="space-y-3">
+        {% for song in pagination.items %}
+            <div class="flex items-center gap-4 bg-white p-3 rounded-xl border border-gray-100 hover:border-primary-200 hover:shadow-sm transition">
+                <div class="w-12 h-12 rounded-lg overflow-hidden bg-gradient-to-br from-orange-300 to-orange-500 flex items-center justify-center text-white flex-shrink-0">
+                    {% if song.cover_url %}
+                        <img src="{{ song.cover_url }}" alt="{{ song.title }}" class="w-full h-full object-cover" loading="lazy">
+                    {% else %}
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                    {% endif %}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="font-medium truncate">{{ song.title }}</p>
+                    <p class="text-sm text-gray-500">
+                        <a href="{{ url_for('public.artist_profile', slug=song.artist.slug) }}" class="hover:text-primary-500 hover:underline">{{ song.artist.stage_name }}</a>
+                        &bull; {{ song.genre }} &bull; {{ song.download_count }} downloads
+                    </p>
+                </div>
+                <a href="{{ url_for('public.song_detail', slug=song.slug) }}" class="px-4 py-2 text-sm font-medium text-primary-500 border border-primary-500 rounded-lg hover:bg-primary-500 hover:text-white transition flex-shrink-0">Details</a>
+            </div>
+        {% else %}
+            <p class="text-center text-gray-400 py-16">No songs found{% if search or genre %} matching your filters{% endif %}.</p>
+        {% endfor %}
+    </div>
+
+    {% if pagination.pages > 1 %}
+    <div class="flex justify-center gap-2 mt-10">
+        {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+            {% if page_num %}
+                <a href="{{ url_for('public.all_songs', page=page_num, genre=genre, q=search, sort=sort) }}" class="px-3 py-1 rounded-lg text-sm {% if page_num == pagination.page %}bg-primary-500 text-white{% else %}bg-gray-100 text-gray-600 hover:bg-gray-200{% endif %}">{{ page_num }}</a>
+            {% else %}
+                <span class="px-3 py-1 text-gray-400">...</span>
+            {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

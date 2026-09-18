@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{% block meta_description %}Download the latest Ateker music. Free MP3 downloads from top local artists.{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}Ateker Music{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Discover and download Ateker's finest music.{% endblock %}">
+    <meta property="og:type" content="website">
+    <link rel="canonical" href="{% block canonical %}{{ request.url_root.rstrip('/') }}{{ request.path }}{% endblock %}">
+    <title>{% block title %}Ateker Music{% endblock %}</title>
+    {% block structured_data %}{% endblock %}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: { 50: '#FFF3E6', 100: '#FFE4CC', 500: '#F26522', 600: '#D35400', 700: '#A04000' },
+                    }
+                }
+            }
+        }
+    </script>
+    {% block head %}{% endblock %}
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center gap-8">
+                    <a href="{{ url_for('public.home') }}" class="flex items-center gap-2">
+                        <div class="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center text-white">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2z"/></svg>
+                        </div>
+                        <span class="text-xl font-bold text-primary-500">Ateker Music</span>
+                    </a>
+                    <div class="hidden md:flex items-center gap-6">
+                        <a href="{{ url_for('public.home') }}" class="text-sm font-medium text-gray-600 hover:text-primary-500">Home</a>
+                        <a href="{{ url_for('public.artists') }}" class="text-sm font-medium text-gray-600 hover:text-primary-500">Artists</a>
+                        <a href="{{ url_for('public.all_songs') }}" class="text-sm font-medium text-gray-600 hover:text-primary-500">Songs</a>
+                        <a href="{{ url_for('public.latest_releases') }}" class="text-sm font-medium text-gray-600 hover:text-primary-500">Latest</a>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <form action="{{ url_for('public.search') }}" class="hidden sm:block">
+                        <div class="relative">
+                            <input type="text" name="q" placeholder="Search..." class="pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-primary-500 w-48">
+                            <svg class="w-4 h-4 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                        </div>
+                    </form>
+                    {% if current_user.is_authenticated %}
+                        <div class="relative group">
+                            <button class="flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-primary-500">
+                                <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-600">
+                                    {{ (current_user.profile.first_name or current_user.email[0])[:1].upper() }}
+                                </div>
+                                <span class="hidden sm:inline">{{ current_user.profile.first_name or current_user.email.split('@')[0] }}</span>
+                            </button>
+                            <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                                {% if current_user.is_artist() %}
+                                    <a href="{{ url_for('artist.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Artist Dashboard</a>
+                                    <a href="{{ url_for('artist.upload') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Upload Music</a>
+                                {% endif %}
+                                {% if current_user.is_admin() %}
+                                    <a href="{{ url_for('admin.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Admin Panel</a>
+                                {% endif %}
+                                <a href="{{ url_for('auth.profile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Profile</a>
+                                <a href="{{ url_for('auth.settings') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Settings</a>
+                                <div class="border-t border-gray-100"></div>
+                                <a href="{{ url_for('auth.logout') }}" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-50">Logout</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="{{ url_for('auth.login') }}" class="text-sm font-medium text-gray-600 hover:text-primary-500">Log in</a>
+                        <a href="{{ url_for('auth.register') }}" class="px-4 py-2 text-sm font-medium bg-primary-500 text-white rounded-lg hover:bg-primary-600">Sign up</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="max-w-7xl mx-auto px-4 pt-4">
+                {% for category, message in messages %}
+                    <div class="p-4 mb-2 rounded-lg text-sm {% if category == 'error' %}bg-red-50 text-red-700 border border-red-200{% elif category == 'success' %}bg-green-50 text-green-700 border border-green-200{% else %}bg-blue-50 text-blue-700 border border-blue-200{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <main class="flex-1">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 py-12">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Ateker Music</h4>
+                    <p class="text-sm leading-relaxed">Your home for Ateker's best music. Discover, stream, and download tracks from top local artists.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Quick Links</h4>
+                    <a href="{{ url_for('public.home') }}" class="block text-sm mb-2 hover:text-primary-500">Home</a>
+                    <a href="{{ url_for('public.artists') }}" class="block text-sm mb-2 hover:text-primary-500">Artists</a>
+                    <a href="{{ url_for('public.all_songs') }}" class="block text-sm mb-2 hover:text-primary-500">Music</a>
+                    <a href="{{ url_for('public.about') }}" class="block text-sm mb-2 hover:text-primary-500">About Us</a>
+                    <a href="{{ url_for('public.contact') }}" class="block text-sm mb-2 hover:text-primary-500">Contact</a>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Legal</h4>
+                    <a href="{{ url_for('public.privacy') }}" class="block text-sm mb-2 hover:text-primary-500">Privacy Policy</a>
+                    <a href="{{ url_for('public.data_privacy') }}" class="block text-sm mb-2 hover:text-primary-500">Data Privacy</a>
+                    <a href="{{ url_for('public.terms') }}" class="block text-sm mb-2 hover:text-primary-500">Terms & Conditions</a>
+                    <a href="{{ url_for('public.copyright_policy') }}" class="block text-sm mb-2 hover:text-primary-500">Copyright Policy</a>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">Connect</h4>
+                    <a href="#" class="block text-sm mb-2 hover:text-primary-500">Facebook</a>
+                    <a href="#" class="block text-sm mb-2 hover:text-primary-500">Twitter / X</a>
+                    <a href="#" class="block text-sm mb-2 hover:text-primary-500">Instagram</a>
+                    <a href="#" class="block text-sm mb-2 hover:text-primary-500">YouTube</a>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
+                &copy; {{ current_year }} Ateker Music. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

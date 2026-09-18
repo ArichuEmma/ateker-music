@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Latest Releases | Ateker Music{% endblock %}
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 py-10">
+    <div class="flex items-center justify-between mb-8">
+        <h1 class="text-3xl font-bold">Latest Releases</h1>
+        <a href="{{ url_for('public.all_songs') }}" class="text-sm text-primary-500 font-medium hover:underline">Browse all songs</a>
+    </div>
+
+    <div class="space-y-3">
+        {% for song in songs %}
+            <div class="flex items-center gap-4 bg-white p-3 rounded-xl border border-gray-100 hover:border-primary-200 hover:shadow-sm transition">
+                <div class="w-12 h-12 rounded-lg overflow-hidden bg-gradient-to-br from-orange-300 to-orange-500 flex items-center justify-center text-white flex-shrink-0">
+                    {% if song.cover_url %}
+                        <img src="{{ song.cover_url }}" alt="{{ song.title }}" class="w-full h-full object-cover" loading="lazy">
+                    {% else %}
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                    {% endif %}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="font-medium truncate">{{ song.title }}</p>
+                    <p class="text-sm text-gray-500">
+                        <a href="{{ url_for('public.artist_profile', slug=song.artist.slug) }}" class="hover:text-primary-500 hover:underline">{{ song.artist.stage_name }}</a>
+                        &bull; {{ song.genre }} &bull; {{ song.created_at.strftime('%b %d, %Y') }}
+                    </p>
+                </div>
+                <a href="{{ url_for('public.song_detail', slug=song.slug) }}" class="px-4 py-2 text-sm font-medium text-primary-500 border border-primary-500 rounded-lg hover:bg-primary-500 hover:text-white transition flex-shrink-0">Details</a>
+            </div>
+        {% else %}
+            <p class="text-center text-gray-400 py-16">No songs released yet.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
